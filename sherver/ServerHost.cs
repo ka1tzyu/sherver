@@ -20,8 +20,13 @@ namespace Server.sherver
             {
                 var client = listener.AcceptTcpClient();
                 using (var stream = client.GetStream())
+                using (var reader = new StreamReader(stream))
                 {
-                    _handler.Handle(stream);
+                    var firstLine = reader.ReadLine();
+                    for (string line = null; line != string.Empty; line = reader.ReadLine()) {}
+
+                    var request = RequestParser.Parse(firstLine);
+                    _handler.Handle(stream, request);
                 }
             }
         }

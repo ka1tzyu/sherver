@@ -2,5 +2,5 @@
 
 public interface IHandler
 {
-    void Handle(Stream networkStream);
+    void Handle(Stream networkStream, Request request);
 }
