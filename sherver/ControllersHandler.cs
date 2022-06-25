@@ -49,6 +49,17 @@ public class ControllersHandler : IHandler
         }
     }
 
+    public async Task HandleAsync(Stream networkStream, Request request)
+    {
+        if (!_routes.TryGetValue(request.Path, out var func))
+            await ResponseWriter.WriteStatusAsync(HttpStatusCode.NotFound, networkStream);
+        else
+        {
+            await ResponseWriter.WriteStatusAsync(HttpStatusCode.OK, networkStream);
+            await WriteControllerResponseAsync(func(), networkStream);
+        }
+    }
+
     private void WriteControllerResponse(object response, Stream networkStream)
     {
         if (response is string str)
@@ -63,6 +74,28 @@ public class ControllersHandler : IHandler
         else
         {
             WriteControllerResponse(JsonConvert.SerializeObject(response), networkStream);
+        }
+    }
+    
+    private async Task WriteControllerResponseAsync(object response, Stream networkStream)
+    {
+        if (response is string str)
+        {
+            using var writer = new StreamWriter(networkStream, leaveOpen:true);
+            writer.Write(str);
+        } 
+        else if (response is byte[] buffer)
+        {
+            networkStream.Write(buffer, 0, buffer.Length);    
+        }
+        else if (response is Task task)
+        {
+            await task;
+            await WriteControllerResponseAsync(task.GetType().GetProperty("Result").GetValue(task), networkStream);
+        }
+        else
+        {
+            await WriteControllerResponseAsync(JsonConvert.SerializeObject(response), networkStream);
         }
     }
 }
