@@ -3,28 +3,6 @@ using System.Net.Sockets;
 
 namespace Server.sherver
 {
-    public interface IHandler
-    {
-        void Handle(Stream stream);
-    }
-
-    public class StaticFileHandler : IHandler
-    {
-        public void Handle(Stream stream)
-        {
-            using (var reader = new StreamReader(stream))
-            using (var writer = new StreamWriter(stream))
-            {
-                for (string line = null; line != string.Empty; line = reader.ReadLine())
-                {
-                    Console.WriteLine(line);
-                }
-                    
-                writer.WriteLine("Server got you");
-            }
-        }
-    }
-    
     public class ServerHost
     {
         private readonly IHandler _handler;

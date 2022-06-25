@@ -11,4 +11,13 @@
       <ProjectReference Include="..\sherver\sherver.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="www\new.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="www\tg.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
